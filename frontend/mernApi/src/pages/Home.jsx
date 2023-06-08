@@ -13,7 +13,8 @@ const Home = () => {
   const [goals, setGoals] = useState([]);
   useEffect(() => {
     getGoals();
-  }, [context.token]);
+  }, [context.token, goals]);
+  // READ...
   const getGoals = async () => {
     const response = await fetch("http://localhost:5000/api/goals/", {
       method: "GET",
@@ -25,6 +26,34 @@ const Home = () => {
       const data = await response.json();
       setGoals(data);
     }
+  };
+  // CREATE..
+  const creatGoal = async () => {
+    if (text === "") {
+      alert("Please Enter Something");
+      return;
+    }
+    const response = await fetch("http://localhost:5000/api/goals", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${String(context.token)}`,
+      },
+      body: JSON.stringify({ text: text }),
+    });
+  };
+  // DELETE
+  const deleteGoal = async () => {
+    const response = await fetch(
+      "http://localhost:5000/api/goals" + `/${context.user_id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${String(context.token)}`,
+        },
+      }
+    );
   };
 
   return (
@@ -63,7 +92,15 @@ const Home = () => {
                   <div className="flex justify-between">
                     <div className="font-semibold text-xl mx-1">● {i.text}</div>
                     <div className=" flex  justify-center hover:text-white hover:bg-red-500/95 rounded-full h-7 w-7 mx-1">
-                      <button className="cursor-pointer">x</button>
+                      <button
+                        className="cursor-pointer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          deleteGoal();
+                        }}
+                      >
+                        x
+                      </button>
                     </div>
                   </div>
                 </li>
@@ -76,7 +113,7 @@ const Home = () => {
             <textarea
               name="text"
               value={text}
-              onChange={() => {
+              onChange={(e) => {
                 e.preventDefault();
                 setText(e.target.value);
               }}
@@ -85,6 +122,7 @@ const Home = () => {
               className="bg-gradient-to-r w-2/12 from-violet-500 to-violet-400 hover:from-violet-600 hover:to-violet-400  px-9 py-1 mt-3 rounded-sm text-white font-mono font-bold  shadow-md shadow-violet-400/60 opacity-100 "
               onClick={() => {
                 setFlag(false);
+                creatGoal();
               }}
             >
               Add Goal
