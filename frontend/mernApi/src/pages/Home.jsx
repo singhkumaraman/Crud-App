@@ -7,16 +7,18 @@ import {
   FaRegFutbol,
 } from "react-icons/fa";
 const Home = () => {
+  const [flag, setFlag] = useState(false);
+  const [text, setText] = useState("");
   const context = useContext(GlobalContext);
   const [goals, setGoals] = useState([]);
+  useEffect(() => {
+    getGoals();
+  }, [context.token]);
   const getGoals = async () => {
-    console.log(context.user);
-    console.log(context.user_id);
-    console.log(context.token);
     const response = await fetch("http://localhost:5000/api/goals/", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${context.token}`,
+        Authorization: `Bearer ${String(context.token)}`,
       },
     });
     if (response.status === 200) {
@@ -24,9 +26,7 @@ const Home = () => {
       setGoals(data);
     }
   };
-  useEffect(() => {
-    getGoals();
-  }, []);
+
   return (
     <>
       <nav className="bg-gradient-to-r from-violet-700 via-indigo-300 to-violet-700 py-2 px-0 shadow-lg shadow-violet-400/60">
@@ -38,9 +38,8 @@ const Home = () => {
           <div className="flex">
             <FaRegArrowAltCircleRight className="my-2 mx-1" />
             <Link
-              to="/"
+              to="/login"
               onClick={() => {
-                e.preventDefault();
                 context.logout();
               }}
             >
@@ -52,7 +51,7 @@ const Home = () => {
       <div>
         <div>
           <header className="ml-[540px] m-2 mb-2 p-2 pb-4 border-b-2 border-gray-100 font-sans font-bold text-4xl">
-            {context.user}'s Goals Dashboard
+            {context.user.toUpperCase()}'s Goals Dashboard
           </header>
           <ul>
             {goals.map((i, index) => {
@@ -62,7 +61,7 @@ const Home = () => {
                   key={index}
                 >
                   <div className="flex justify-between">
-                    <div className="font-semibold text-xl mx-1">{i.text}</div>
+                    <div className="font-semibold text-xl mx-1">● {i.text}</div>
                     <div className=" flex  justify-center hover:text-white hover:bg-red-500/95 rounded-full h-7 w-7 mx-1">
                       <button className="cursor-pointer">x</button>
                     </div>
@@ -72,6 +71,37 @@ const Home = () => {
             })}
           </ul>
         </div>
+        {flag ? (
+          <div className="mx-5 flex flex-col ">
+            <textarea
+              name="text"
+              value={text}
+              onChange={() => {
+                e.preventDefault();
+                setText(e.target.value);
+              }}
+            ></textarea>
+            <button
+              className="bg-gradient-to-r w-2/12 from-violet-500 to-violet-400 hover:from-violet-600 hover:to-violet-400  px-9 py-1 mt-3 rounded-sm text-white font-mono font-bold  shadow-md shadow-violet-400/60 opacity-100 "
+              onClick={() => {
+                setFlag(false);
+              }}
+            >
+              Add Goal
+            </button>
+          </div>
+        ) : (
+          <div>
+            <button
+              className="bg-gradient-to-r from-violet-500 to-violet-400 hover:from-violet-600 hover:to-violet-400  px-9 py-1 mt-3 rounded-sm text-white font-mono font-bold  shadow-md shadow-violet-400/60 opacity-100 mx-5"
+              onClick={() => {
+                setFlag(true);
+              }}
+            >
+              Add Goal
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

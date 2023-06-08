@@ -1,21 +1,25 @@
 import { createContext, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 const initialState = {
   user: null,
   user_id: null,
   token: null,
+  setAuthToken: null,
+  setUserId: null,
+  setUser: null,
   signup: () => {},
   login: () => {},
   logout: () => {},
 };
 export const GlobalContext = createContext(initialState);
 export function GlobalProvider({ children }) {
-  const [authToken, setAuthToken] = useState(
+  const [authToken, setAuthToken] = useState(() => {
     localStorage.getItem("authToken")
       ? JSON.parse(localStorage.getItem("authToken"))
-      : null
-  );
+      : null;
+  });
   const [userId, setUserId] = useState(
     localStorage.getItem("authToken")
       ? jwt_decode(localStorage.getItem("authToken"))._id
@@ -45,46 +49,47 @@ export function GlobalProvider({ children }) {
     });
     if (response.status === 200) {
       alert("User Created Successfully");
-      <Navigate to="/login" />;
+      // <Navigate to="/login" />;
     } else {
       alert("User Already Exists");
     }
   };
-  const login = async (email, password) => {
-    if (email === "" || password === "") {
-      alert("Please Enter Valid Credentials");
-      return;
-    }
-    const response = await fetch("http://localhost:5000/api/user/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    });
-    if (response.status === 200) {
-      const data = await response.json();
-      const token = data.token;
-      localStorage.setItem("authtoken", JSON.stringify(token));
-      localStorage.setItem("user", JSON.stringify(data.user.name));
-      setUserId(data.user._id);
-      setAuthToken(token);
-      setUser(data.user.name);
-      // <Navigate to="/home" />;
-      // alert("Login Successfull");
-    } else {
-      alert("Invalid Credentials");
-    }
-  };
+  // const login = async (email, password) => {
+  //   const nav = useNavigate();
+  //   if (email === "" || password === "") {
+  //     alert("Please Enter Valid Credentials");
+  //     return;
+  //   }
+  //   const response = await fetch("http://localhost:5000/api/user/login", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       email: email,
+  //       password: password,
+  //     }),
+  //   });
+  //   if (response.status === 200) {
+  //     const data = await response.json();
+  //     const token = data.token;
+  //     localStorage.setItem("authToken", JSON.stringify(token));
+  //     localStorage.setItem("user", JSON.stringify(data.user.name));
+  //     setUserId(data.user._id);
+  //     setAuthToken(token);
+  //     setUser(data.user.name);
+  //     // alert("Login Successfull");
+  //     nav("/home");
+  //   } else {
+  //     alert("Invalid Credentials");
+  //   }
+  // };
   const logout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("user");
     setAuthToken(null);
     setUserId(null);
     setUser(null);
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("user");
   };
   const update = () => {
     if (authToken === null) logout();
@@ -96,13 +101,16 @@ export function GlobalProvider({ children }) {
     user: user,
     user_id: userId,
     token: authToken,
+    setAuthToken: setAuthToken,
+    setUserId: setUserId,
+    setUser: setUser,
     signup: signup,
-    login: login,
+    // login: login,
     logout: logout,
   };
-  // useEffect(() => {
-  //   update();
-  // }, []);
+  useEffect(() => {
+    update();
+  }, []);
   return (
     <GlobalContext.Provider value={contextValue}>
       {children}
