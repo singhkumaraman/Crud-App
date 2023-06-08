@@ -55,7 +55,17 @@ const Home = () => {
       }
     );
   };
-
+  // UPDATE..
+  const updateGoal = async () => {
+    const response = await fetch("http://localhost:5000/api/goals", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${String(context.token)}`,
+      },
+      body: JSON.stringify({ text: text }),
+    });
+  };
   return (
     <>
       <nav className="bg-gradient-to-r from-violet-700 via-indigo-300 to-violet-700 py-2 px-0 shadow-lg shadow-violet-400/60">
@@ -93,7 +103,7 @@ const Home = () => {
                     <div className="font-semibold text-xl mx-1">● {i.text}</div>
                     <div className=" flex  justify-center hover:text-white hover:bg-red-500/95 rounded-full h-7 w-7 mx-1">
                       <button
-                        className="cursor-pointer"
+                        className="cursor-pointer font-extrabold"
                         onClick={(e) => {
                           e.preventDefault();
                           deleteGoal();

@@ -69,7 +69,7 @@ const Login = () => {
         </div>
         <div className="m-3 flex justify-between">
           <button
-            className="py-1 px-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg"
+            className="py-1 px-2 bg-violet-500 hover:bg-violet-600 text-white font-semibold rounded-lg"
             onClick={(e) => {
               // e.preventDefault();
               login(email, password);

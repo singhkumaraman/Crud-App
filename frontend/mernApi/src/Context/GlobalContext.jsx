@@ -61,7 +61,7 @@ export function GlobalProvider({ children }) {
   };
   const update = () => {
     if (authToken === null) logout();
-    setUserId(jwt_decode(localStorage.getItem("authToken"))._id);
+    // setUserId(jwt_decode(localStorage.getItem("authToken"))._id);
     setAuthToken(JSON.parse(localStorage.getItem("authToken")));
     setUser(JSON.parse(localStorage.getItem("user")));
   };
@@ -72,12 +72,12 @@ export function GlobalProvider({ children }) {
     setAuthToken: setAuthToken,
     setUserId: setUserId,
     setUser: setUser,
-    signup: signup,
+    // signup: signup,
     logout: logout,
   };
-  // useEffect(() => {
-  //   update();
-  // }, []);
+  useEffect(() => {
+    update();
+  }, []);
   return (
     <GlobalContext.Provider value={contextValue}>
       {children}

@@ -4,12 +4,37 @@ import { useContext } from "react";
 import { GlobalContext } from "../Context/GlobalContext";
 import { FaUserAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const nav = useNavigate();
   const [user, setUser] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const context = useContext(GlobalContext);
+  const signup = async (name, email, password) => {
+    if (name == "" || password === "" || email === "") {
+      alert("Please Enter all the fields");
+      return;
+    }
+    const response = await fetch("http://localhost:5000/api/user/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        password: password,
+      }),
+    });
+    if (response.status === 200) {
+      alert("User Created Successfully");
+      nav("/login");
+    } else {
+      alert("User Already Exists");
+    }
+  };
   return (
     <div className="flex flex-col justify-center items-center bg-gray-50 min-h-screen">
       <div className=" border p-6 rounded-lg  shadow-md  border-gray-200 bg-white ">
@@ -54,9 +79,9 @@ const SignUp = () => {
           <button
             onClick={(e) => {
               e.preventDefault();
-              context.signup(user, email, password);
+              signup(user, email, password);
             }}
-            className="py-1 px-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg"
+            className="py-1 px-2 bg-violet-500 hover:bg-violet-600 text-white font-semibold rounded-lg"
           >
             Sign Up
           </button>
