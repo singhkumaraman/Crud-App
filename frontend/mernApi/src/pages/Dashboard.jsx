@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Header from "../Components/Header";
 import {
   FaUserAlt,
   FaRegArrowAltCircleRight,
@@ -9,30 +10,26 @@ import logo from "../assets/404.png";
 const Dashboard = () => {
   return (
     <>
-      <nav className="bg-gradient-to-r from-violet-700 via-indigo-300 to-violet-700 py-2 px-0 shadow-lg shadow-violet-400/60">
-        <div className="flex justify-between">
-          <div className="flex font-bold text-4xl px-3">
-            <FaRegFutbol className="my-1 mx-1" />
-            Goal Setter
+      <Header />
+      <section class="bg-white dark:bg-gray-900">
+        <div class="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
+          <div class="mr-auto place-self-center lg:col-span-7">
+            <h1 class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">
+              A simple notes app
+            </h1>
+            <p class="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
+              Do make sure that your tasks are written down all in one place so
+              you don't forget anything important. And by prioritizing tasks,
+              you plan the order in which you'll do them, so that you can tell
+              what needs your immediate attention, and what you can leave until
+              later.
+            </p>
           </div>
-          <div className="flex">
-            <FaRegArrowAltCircleRight className="my-2 mx-1" />
-            <Link to="/login">
-              <div className="font-semibold mx-1 my-1">Login</div>
-            </Link>
-            <FaUserAlt className="my-2 mx-1" />
-            <Link to="/register">
-              <div className="font-semibold mx-1 my-1">Register</div>
-            </Link>
+          <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
+            <img src={logo} alt="mockup" />
           </div>
         </div>
-      </nav>
-      <div>
-        <header className="ml-[540px] m-2 mb-2 p-2 pb-4 border-b-2 border-gray-100 font-sans font-bold text-4xl">
-          Login in And Set Goals...??
-        </header>
-        <img src={logo} className="w-50 h-50 ml-[500px]" />
-      </div>
+      </section>
     </>
   );
 };

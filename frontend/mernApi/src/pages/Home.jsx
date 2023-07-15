@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Context/GlobalContext";
-import { Link } from "react-router-dom";
-import {
-  FaUserAlt,
-  FaRegArrowAltCircleRight,
-  FaRegFutbol,
-} from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import ListItem from "../Components/ListItem";
+import HomeHeader from "../Components/HomeHeader";
 const Home = () => {
+  const nav = useNavigate();
   const [flag, setFlag] = useState(false);
   const [text, setText] = useState("");
   const context = useContext(GlobalContext);
@@ -16,10 +14,10 @@ const Home = () => {
   }, [context.token, goals]);
   // READ...
   const getGoals = async () => {
-    const response = await fetch("http://localhost:5000/api/goals/", {
+    const response = await fetch("http://localhost:5001/api/goals/", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${String(context.token)}`,
+        Authorization: `Bearer ${context.token}`,
       },
     });
     if (response.status === 200) {
@@ -33,7 +31,7 @@ const Home = () => {
       alert("Please Enter Something");
       return;
     }
-    const response = await fetch("http://localhost:5000/api/goals", {
+    const response = await fetch("http://localhost:5001/api/goals", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -45,111 +43,55 @@ const Home = () => {
   // DELETE
   const deleteGoal = async () => {
     const response = await fetch(
-      "http://localhost:5000/api/goals" + `/${context.user_id}`,
+      "http://localhost:5001/api/goals" + `/${context.user_id}`,
       {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${String(context.token)}`,
+          Authorization: `Bearer ${context.token}`,
         },
       }
     );
   };
-  // UPDATE..
-  const updateGoal = async () => {
-    const response = await fetch("http://localhost:5000/api/goals", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${String(context.token)}`,
-      },
-      body: JSON.stringify({ text: text }),
-    });
-  };
   return (
     <>
-      <nav className="bg-gradient-to-r from-violet-700 via-indigo-300 to-violet-700 py-2 px-0 shadow-lg shadow-violet-400/60">
-        <div className="flex justify-between">
-          <div className="flex font-bold text-4xl px-3">
-            <FaRegFutbol className="my-1 mx-1" />
-            Goal Setter
-          </div>
-          <div className="flex">
-            <FaRegArrowAltCircleRight className="my-2 mx-1" />
-            <Link
-              to="/login"
-              onClick={() => {
-                context.logout();
-              }}
-            >
-              <div className="font-semibold mx-3 my-1">Logout</div>
-            </Link>
-          </div>
+      <HomeHeader />
+      <div className="p-4 flex-grow bg-gray-900">
+        <header className="text-center text-3xl font-semibold text-primary-700">
+          {context.user.toUpperCase()}'s Goals List
+        </header>
+        <div className="flex justify-center gap-4 m-6">
+          <input
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            className="bg-gray-50 border rounded-lg"
+            placeholder=" add task"
+          />
+
+          <button
+            className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            onClick={() => {
+              creatGoal();
+            }}
+          >
+            Add Goal
+          </button>
         </div>
-      </nav>
-      <div>
-        <div>
-          <header className="ml-[540px] m-2 mb-2 p-2 pb-4 border-b-2 border-gray-100 font-sans font-bold text-4xl">
-            {context.user.toUpperCase()}'s Goals Dashboard
-          </header>
+        <div className="w-1/2 m-auto border rounded-xl bg-slate-50 ">
           <ul>
             {goals.map((i, index) => {
               return (
-                <li
-                  className="list-outside m-2 mb-2 p-2 pb-4 border-b-2 border-gray-100 font-sans"
+                <ListItem
+                  text={i.text}
                   key={index}
-                >
-                  <div className="flex justify-between">
-                    <div className="font-semibold text-xl mx-1">● {i.text}</div>
-                    <div className=" flex  justify-center hover:text-white hover:bg-red-500/95 rounded-full h-7 w-7 mx-1">
-                      <button
-                        className="cursor-pointer font-extrabold"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          deleteGoal();
-                        }}
-                      >
-                        x
-                      </button>
-                    </div>
-                  </div>
-                </li>
+                  handleClick={deleteGoal}
+                  onClick={() => {}}
+                />
               );
             })}
           </ul>
         </div>
-        {flag ? (
-          <div className="mx-5 flex flex-col ">
-            <textarea
-              name="text"
-              value={text}
-              onChange={(e) => {
-                e.preventDefault();
-                setText(e.target.value);
-              }}
-            ></textarea>
-            <button
-              className="bg-gradient-to-r w-2/12 from-violet-500 to-violet-400 hover:from-violet-600 hover:to-violet-400  px-9 py-1 mt-3 rounded-sm text-white font-mono font-bold  shadow-md shadow-violet-400/60 opacity-100 "
-              onClick={() => {
-                setFlag(false);
-                creatGoal();
-              }}
-            >
-              Add Goal
-            </button>
-          </div>
-        ) : (
-          <div>
-            <button
-              className="bg-gradient-to-r from-violet-500 to-violet-400 hover:from-violet-600 hover:to-violet-400  px-9 py-1 mt-3 rounded-sm text-white font-mono font-bold  shadow-md shadow-violet-400/60 opacity-100 mx-5"
-              onClick={() => {
-                setFlag(true);
-              }}
-            >
-              Add Goal
-            </button>
-          </div>
-        )}
       </div>
     </>
   );

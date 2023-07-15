@@ -34,7 +34,7 @@ export function GlobalProvider({ children }) {
       alert("Please Enter all the fields");
       return;
     }
-    const response = await fetch("http://localhost:5000/api/user/register", {
+    const response = await fetch("http://localhost:5001/api/user/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
